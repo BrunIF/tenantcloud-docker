@@ -35,6 +35,11 @@ RUN echo "tenantcloud.l" > /etc/hostname
 #RUN hostname tenantcloud.l
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
+# Configure supervisor GUI
+
+COPY supervisor/gui.txt /root/gui.txt
+RUN cat /root/gui.txt >> /etc/supervisor/supervisor.conf
+
 # Install Base PHP Packages
 
 RUN apt install -y --force-yes php7.1-cli php7.1-dev \
@@ -68,11 +73,15 @@ RUN sed -i "s/;cgi.fix_pathinfo=0/cgi.fix_pathinfo=1/" /etc/php/7.1/fpm/php.ini
 RUN sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.1/fpm/php.ini
 RUN sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/fpm/php.ini
 
+COPY php/php-xdebug.txt /root/php-xdebug.txt
+RUN cat /root/php-xdebug.txt >> /etc/php/7.1/fpm/php.ini
+
 # Configure web server
 
 COPY ./nginx/tenantcloud.conf /etc/nginx/sites-enabled/
 RUN mkdir -p /etc/nginx/ssl/tenantcloud.l/
 COPY ./nginx/ssl/ssl.* /etc/nginx/ssl/tenantcloud.l/
+RUN chmod 777 -R /etc/nginx/ssl/
 RUN mkdir -p /var/www/tenantcloud
 
 # Install nodejs 
@@ -86,19 +95,26 @@ RUN npm install -g pm2 && \
 
 # Install MySQL
 
-COPY install-mysql.sh /root/install-mysql.sh
+COPY mysql/install-mysql.sh /root/install-mysql.sh
+COPY mysql/mysql.sql /root/mysql.sql
 RUN /root/install-mysql.sh
 
 # Install Redis
 
 RUN apt install -y redis-server
 
-EXPOSE 80 443 3306 6001 6379 9000
+# Install mailcatcher
+
+RUN apt install mailcatcher
+
+EXPOSE 80 443 3306 6001 6379 9000 9001 9090
 
 # Start software 
 COPY supervisor/tenantcloud.conf /etc/supervisor/conf.d/
 RUN service php7.1-fpm start
 RUN service mysql start
 RUN service redis-server start
-RUN service php7.1-fpm restart
 CMD ["/usr/bin/supervisord"]
+
+RUN service php7.1-fpm restart && service redis-server restart
+
