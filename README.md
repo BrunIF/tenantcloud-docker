@@ -14,6 +14,6 @@ password: root
 
 
 ## Run container
-```docker run -it --rm -p 80:80 -p 433:433 -p 3306:3306 -v ~/Projects/tenant:/var/www/tenantcloud --name tenant ukietech/tenantcloud```
+```docker run -it --rm -p 80:80 -p 443:443 -p 3306:3306 -p 6001:6001 -v ~/Projects/tenant:/var/www/tenantcloud --name tenant ukietech/tenantcloud```
 
 
