@@ -64,7 +64,7 @@ RUN sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/cli/php.ini
 
 RUN sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/fpm/php.ini
 RUN sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/fpm/php.ini
-RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.1/fpm/php.ini
+RUN sed -i "s/;cgi.fix_pathinfo=0/cgi.fix_pathinfo=1/" /etc/php/7.1/fpm/php.ini
 RUN sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php/7.1/fpm/php.ini
 RUN sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/fpm/php.ini
 
@@ -93,11 +93,12 @@ RUN /root/install-mysql.sh
 
 RUN apt install -y redis-server
 
-EXPOSE 80 443 9000 3306
+EXPOSE 80 443 3306 6001 6379 9000
 
 # Start software 
 COPY supervisor/tenantcloud.conf /etc/supervisor/conf.d/
 RUN service php7.1-fpm start
 RUN service mysql start
 RUN service redis-server start
+RUN service php7.1-fpm restart
 CMD ["/usr/bin/supervisord"]

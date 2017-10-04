@@ -14,6 +14,19 @@ password: root
 
 
 ## Run container
-```docker run -it --rm -p 80:80 -p 443:443 -p 3306:3306 -p 6001:6001 -v ~/Projects/tenant:/var/www/tenantcloud --name tenant ukietech/tenantcloud```
+```docker run -it --rm -p 80:80 -p 443:443 -p 3306:3306 -p 6001:6001 -p 6379:6379 -v /media/1tb/tenant:/var/www/tenantcloud --name tenant ukietech/tenantcloud```
 
+## Bugs
+
+After start container You must open container
+
+```
+docker exec -it tenant bash
+```
+
+and restart Redis server and PHP FPM:
+
+```
+service php7.1-fpm restart && service redis-server restart
+```
 
