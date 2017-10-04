@@ -18,18 +18,19 @@ password: root
 
 Run as Daemon:
 ```
-docker run -d -p 80:80 -p 443:443 -p 3306:3306 -p 6001:6001 -p 6379:6379 -p 9001:9001 -p 9090:9090 -v /home/user/tenant:/var/www/tenantcloud --name tenant ukietech/tenantcloud
+docker run -d -p 80:80 -p 443:443 -p 1080:1080 -p 3306:3306 -p 6001:6001 -p 6379:6379 -p 9001:9001 -p 9090:9090 -v /home/user/tenant:/var/www/tenantcloud --name tenant ukietech/tenantcloud
 ```
 
 Run and delete after exit:
 ```
-docker run -it --rm -p 80:80 -p 443:443 -p 3306:3306 -p 6001:6001 -p 6379:6379 -p 9001:9001 -p 9090:9090 -v /home/user/tenant:/var/www/tenantcloud --name tenant ukietech/tenantcloud
+docker run -it --rm -p 80:80 -p 443:443 -p 1080:1080 -p 3306:3306 -p 6001:6001 -p 6379:6379 -p 9001:9001 -p 9090:9090 -v /home/user/tenant:/var/www/tenantcloud --name tenant ukietech/tenantcloud
 ```
 
 ## Ports
 
 - 80 HTTP
 - 443 HTTPS
+- 1080 Mailcatcher
 - 3306 MySQL
 - 6001, 6379 9000 
 - 9001 xDebug

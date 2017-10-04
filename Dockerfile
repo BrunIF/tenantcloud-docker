@@ -38,7 +38,7 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 # Configure supervisor GUI
 
 COPY supervisor/gui.txt /root/gui.txt
-RUN cat /root/gui.txt >> /etc/supervisor/supervisor.conf
+RUN cat /root/gui.txt >> /etc/supervisor/supervisord.conf
 
 # Install Base PHP Packages
 
@@ -105,15 +105,20 @@ RUN apt install -y redis-server
 
 # Install mailcatcher
 
-RUN apt install mailcatcher
+RUN apt install -y build-essential libsqlite3-dev ruby-dev
+RUN gem install mailcatcher
+RUN echo "sendmail_path = /usr/bin/env $(which catchmail) -f 'www-data@localhost'" >> /etc/php/7.1/mods-available/mailcatcher.ini
+RUN phpenmod mailcatcher
 
-EXPOSE 80 443 3306 6001 6379 9000 9001 9090
+EXPOSE 80 443 1080 3306 6001 6379 9000 9001 9090
 
 # Start software 
 COPY supervisor/tenantcloud.conf /etc/supervisor/conf.d/
 RUN service php7.1-fpm start
 RUN service mysql start
 RUN service redis-server start
+RUN /usr/bin/env $(which mailcatcher) --ip=0.0.0.0
+
 CMD ["/usr/bin/supervisord"]
 
 RUN service php7.1-fpm restart && service redis-server restart
