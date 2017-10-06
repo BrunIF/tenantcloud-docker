@@ -1,5 +1,0 @@
-[inet_http_server]         ; inet (TCP) server disabled by default
-port=127.0.0.1:9090        ; (ip_address:port specifier, *:port for all iface)
-;username=user              ; (default is no username (open server))
-;password=123               ; (default is no password (open server))
-
