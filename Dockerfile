@@ -71,14 +71,6 @@ RUN sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/fpm/php.ini
 COPY php/php-xdebug.txt /root/php-xdebug.txt
 RUN cat /root/php-xdebug.txt >> /etc/php/7.1/fpm/php.ini
 
-# Configure web server
-
-COPY ./nginx/tenantcloud.conf /etc/nginx/sites-enabled/
-RUN mkdir -p /etc/nginx/ssl/tenantcloud.l/
-COPY ./nginx/ssl/ssl.* /etc/nginx/ssl/tenantcloud.l/
-RUN chmod 777 -R /etc/nginx/ssl/
-RUN mkdir -p /var/www/tenantcloud
-
 # Install nodejs 
 RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash -
 RUN apt update
@@ -112,6 +104,16 @@ RUN apt install -y imagemagick
 # Install xDebug
 
 RUN pecl install xdebug
+
+# Configure web server
+
+COPY ./nginx/*.conf /etc/nginx/sites-enabled/
+RUN mkdir -p /etc/nginx/ssl/tenantcloud.l
+RUN mkdir -p /etc/nginx/ssl/seleniumtc.l
+COPY ./nginx/ssl/tenantcloud.l/* /etc/nginx/ssl/tenantcloud.l/
+COPY ./nginx/ssl/seleniumtc.l/* /etc/nginx/ssl/seleniumtc.l/
+RUN chmod 777 -R /etc/nginx/ssl/
+RUN mkdir -p /var/www/tenantcloud
 
 
 EXPOSE 80 443 1080 3306 6001 6379 9000 9001 9090
